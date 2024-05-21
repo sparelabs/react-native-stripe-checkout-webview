@@ -31,6 +31,8 @@ type Props = {
     htmlContentLoading?: string,
     /** The error is set on the element with id='sc-error-message' */
     htmlContentError?: string,
+    /** If using Stripe Connect you specify the account ID of the connected account */
+    stripeAccount?: string,
   },
   /** Props passed to the WebView */
   webViewProps?: Object,
@@ -106,7 +108,11 @@ const StripeCheckoutWebView = (props: Props) => {
   const _onLoadEnd = (syntheticEvent: SyntheticEvent) => {
     const { nativeEvent } = syntheticEvent;
     /** set isLoading to false once the stripe checkout page loads */
-    if (!hasLoaded && nativeEvent.url.startsWith('https://checkout.stripe.com') && onLoadingComplete) {
+    if (
+      !hasLoaded &&
+      nativeEvent.url.startsWith('https://checkout.stripe.com') &&
+      onLoadingComplete
+    ) {
       setHasLoaded(true);
       onLoadingComplete(syntheticEvent);
     }
