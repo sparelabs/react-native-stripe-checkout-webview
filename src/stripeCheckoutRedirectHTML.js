@@ -22,6 +22,8 @@ const stripeCheckoutRedirectHTML = (
     htmlContentError?: string,
     /** The extra HTML content to be placed in the HEAD */
     htmlContentHead?: string,
+    /** If using Stripe Connect you specify the account ID of the connected account */
+    stripeAccount?: string,
   },
 ): string => {
   if (!stripe_public_key) {
@@ -36,7 +38,12 @@ const stripeCheckoutRedirectHTML = (
     htmlContentLoading = '<h1 id="sc-loading"></h1>',
     htmlContentError = '<div id="sc-error-message"></div>',
     htmlContentHead = '',
+    stripeAccount = null,
   } = options || {};
+
+  const initializeStripe = stripeAccount
+    ? `Stripe('${stripe_public_key}', { stripeAccount: '${stripeAccount}' })`
+    : `Stripe('${stripe_public_key}')`;
 
   /** Return html */
   return `
@@ -59,7 +66,7 @@ const stripeCheckoutRedirectHTML = (
       <!-- Stripe execution script -->
       <script>
         (function initStripeAndRedirectToCheckout () {
-          const stripe = Stripe('${stripe_public_key}');
+          const stripe = ${initializeStripe};
           window.onload = () => {
             console.log('RNSC: window loaded');
             // Redirect to Checkout
